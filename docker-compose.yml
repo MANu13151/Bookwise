@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        # Optional: Pass the mirror as a build argument if you want to make it configurable
+        PYPI_MIRROR: "https://mirrors.aliyun.com/pypi/simple/"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    # Add retries for network issues
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # Optional: Pass npm registry if needed
+        NPM_REGISTRY: "https://registry.npmmirror.com"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
