@@ -4,8 +4,10 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY local_packages /app/local_packages
 
-EXPOSE 8000
+RUN pip install --no-cache-dir --no-index --find-links=/app/local_packages -r requirements.txt
 
-CMD ["uvicorn", "fast:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8501
+
+CMD ["streamlit", "run", "cloud_frontend.py", "--server.port=8501", "--server.address=0.0.0.0"]
